@@ -22,7 +22,7 @@ import DailyCollectionComponent from '../../components/DailyCollectionComponent'
 import { getStationData, getStaffData } from '../../sqlite/sqlitedb';
 import { connect, useSelector } from 'react-redux';
 import { getDailyCollectionReport } from '../../apis_auth/apis';
-import { getDailyCollectionReportBm } from '../../apis_auth/apis';
+import { getDailyCollectionReportBm ,getDailyCollectionReportRm , getDailyCollectionReportZm} from '../../apis_auth/apis';
 
 
 
@@ -92,6 +92,35 @@ import { getDailyCollectionReportBm } from '../../apis_auth/apis';
                     })}
                     //Branch MAnager
                     {getUserData.UserData.EmployeeTypeName == "Branch Manager" && getDailyCollectionReportBm(StationReducer.station.stationId,getUserData.UserData.EmployeeId,getUserData.UserData.EmployeeTypeId, setDailyCollectionReport, setNoDailyCollectionData, setProgressVisible).then((value) => {
+                        let data = value.data;
+                        if (data == 'No Record Found') {
+                            setToast({
+                                type: "error",
+                                message: '' + data,
+                            });
+                        } else {
+                            navigation.navigate('GeneratedDailyReport', { report: value });
+                        }
+                    })}
+                    //
+
+
+                      //Area Manager
+                      {getUserData.UserData.EmployeeTypeName == "Area Manager" && getDailyCollectionReportRm(StationReducer.station.stationId,getUserData.UserData.EmployeeId,getUserData.UserData.EmployeeTypeId, setDailyCollectionReport, setNoDailyCollectionData, setProgressVisible).then((value) => {
+                        let data = value.data;
+                        if (data == 'No Record Found') {
+                            setToast({
+                                type: "error",
+                                message: '' + data,
+                            });
+                        } else {
+                            navigation.navigate('GeneratedDailyReport', { report: value });
+                        }
+                    })}
+                    //
+
+                       //Area Manager
+                       {getUserData.UserData.EmployeeTypeName == "Manager Operation" && getDailyCollectionReportZm(StationReducer.station.stationId,getUserData.UserData.EmployeeId,getUserData.UserData.EmployeeTypeId, setDailyCollectionReport, setNoDailyCollectionData, setProgressVisible).then((value) => {
                         let data = value.data;
                         if (data == 'No Record Found') {
                             setToast({

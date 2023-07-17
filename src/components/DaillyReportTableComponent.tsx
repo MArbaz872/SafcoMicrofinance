@@ -11,52 +11,18 @@ import {
 
 const DailyReportTableComponent = ({item})=>{
     return(
+        
         <View>
-        <View style={styles.tableContainer}>
-        <View style={styles.rowTwo}>
-            <View style={styles.columnOne}>
-            <TextView style={styles.columnOneText} text={'Total Customer'} />
-            </View>
-            <View style={styles.columnTwo}>
-            <TextView  style={styles.columnTwoText} text={item.TotalCustomer} />
-            </View>
+      <View style={styles.tableContainer}>
+      <View style={styles.tableRow}>
+      <View style={styles.tableCell}>
+            <TextView style={styles.columnTwoText} text={item.TotalCustomer} />
         </View>
-        <View style={styles.rowOne}>
-            <View style={styles.columnOne}>
-            <TextView style={styles.columnOneText} text={'Total Repayment'} />
-            </View>
-            <View style={styles.columnTwo}>
+        <View style={styles.tableCell}>
             <TextView style={styles.columnTwoText} text={item.TotalRepayment} />
-            </View>
         </View>
-      
-    </View>
-   <View style={{flexDirection:'row',alignItems:'center'}}>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-
-
-   </View>
+      </View>
+      </View>
     </View>
     )
 }
@@ -83,11 +49,12 @@ const styles = StyleSheet.create({
         transform: [{ rotate: "180deg" }],
       },
     tableContainer:{
-        marginTop:250,
+        // marginTop:250,
         borderWidth:1,
         backgroundColor:'#FFF',
         borderColor:"#cdcdcd",
-        borderRadius:5
+        borderRadius:5,
+        
     },
     rowOne:{
         flexDirection:'row',
@@ -117,7 +84,18 @@ const styles = StyleSheet.create({
     },
     columnTwoText:{
         fontSize:12
-    }
+    },
+    tableRow: {
+        flexDirection: 'row',
+      },
+      tableCell: {
+        flex: 1,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }
 })
 
 export default memo(DailyReportTableComponent)

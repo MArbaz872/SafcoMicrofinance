@@ -41,6 +41,14 @@ const CreditScoringReports = ({report})=>{
             <TextView  style={styles.columnTwoText} text={report.allScore} />
             </View>
         </View>
+        <View style={styles.rowTwo}>
+            <View style={styles.columnOne}>
+            <TextView style={styles.columnOneText} text={'Notes'} />
+            </View>
+            <View style={styles.columnTwo}>
+            <TextView  style={styles.columnTwoText} text={report.Notes} />
+            </View>
+        </View>
         <View style={styles.rowOne}>
             <View style={styles.columnOne}>
             <TextView style={styles.columnOneText} text={'Current Loan Status'} />

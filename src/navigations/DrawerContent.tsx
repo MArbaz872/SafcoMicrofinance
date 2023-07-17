@@ -1215,7 +1215,8 @@ const DrawerContent = props => {
 
 
            {/* //------------------Daily Collection */}
-           { (getUserData.UserData.EmployeeTypeName == "Credit Officer" || getUserData.UserData.EmployeeTypeName == "Branch Manager")  && <Pressable
+           { (getUserData.UserData.EmployeeTypeName == "Credit Officer" || getUserData.UserData.EmployeeTypeName == "Branch Manager" || 
+           getUserData.UserData.EmployeeTypeName == "Area Manager" || getUserData.UserData.EmployeeTypeName == "Manager Operation")  && <Pressable
 
             onPress={() => {
             if (StationReducer.station.stationName == undefined) {
@@ -1334,11 +1335,7 @@ style={{ marginTop: 0 }}>
         {/* /////////////////////////////////////////////////////////// */}
 
 
-        {/* //------------------LoanVerification */}
-        {/* { (getUserData.UserData.EmployeeTypeName == "Branch Manager" || 
-        getUserData.UserData.EmployeeTypeName == "Credit Officer" || 
-        getUserData.UserData.EmployeeTypeName == "Verification Officer" ||
-         getUserData.UserData.EmployeeTypeName == "Area Manager" || getUserData.UserData.EmployeeTypeName == "Manager Operation" )&&   */}
+       
           <Pressable
 
           onPress={() => props.navigation.navigate('LoanVerification')}

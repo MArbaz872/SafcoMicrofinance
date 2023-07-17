@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import { ActivityIndicator, Alert, Dimensions, SafeAreaView, ScrollView, StyleSheet, TextInput } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, SafeAreaView, ScrollView, StyleSheet, TextInput , Text } from "react-native";
 import { View } from "react-native-animatable";
 import { AppStatusBar, CnicInputoptions, CustomDropdown, CustomRadio, DateSelector, FormInputs, Header, HeaderwithoutDialoge, TextView } from "../components";
+import {Checkbox} from "react-native-paper";
 import { Colors, GlobalStyles } from "../theme";
 const { width, height } = Dimensions.get("window");
 import { RadioButton } from 'react-native-paper';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useSelector, useDispatch, connect } from 'react-redux';
 import { getEmployeesAccordStationId, insertCustomerFromDataWithRow, insertCibReport, getCustomerFromsAndAnswers } from "../sqlite/sqlitedb";
-import { getAllRegion, getAllDistrict, checkingCIBCustomerbyCnic, generatingCIB, fetchCIBReport, generatingCIR, fetchCIRReport, checkingCIRCustomerbyCnic ,getCustomerNextKin ,getDonorData} from "../apis_auth/apis";
+import { getAllRegion, getAllDistrict, checkingCIBCustomerbyCnic, generatingCIB, fetchCIBReport, generatingCIR, fetchCIRReport, checkingCIRCustomerbyCnic, getCustomerNextKin, getDonorData } from "../apis_auth/apis";
 import Toast from "../components/Toast";
 import { useNavigation } from '@react-navigation/native';
 import { Modalize } from 'react-native-modalize';
@@ -43,6 +44,28 @@ const CIBReport = (props) => {
     const [allDataobj, setAlldataobj] = React.useState(CustomGetDataModule);
     const [reportType, setReportType] = React.useState(undefined);
     const [disableReportType, setDisableReportType] = React.useState(false);
+    const [fieldCount, setFieldCount] = useState(1);
+    const [isRequiredSelected, setIsRequiredSelected] = useState(false);
+    const [CIBReportDataa, setCIBReportData] = useState([
+        {
+            firstname: '', middlename: '', lastname: '', kinNicNumber: ''
+        }
+    ]);
+
+    console.log("here=ll=====>,",CIBReportDataa)
+
+
+    const addFields = () => {
+        if (fieldCount < 4) {
+            setCIBReportData((prevData) => [
+                ...prevData,
+                {
+                    firstname: '', middlename: '', lastname: '', kinNicNumber: ''
+                }
+            ]);
+            setFieldCount(prevCount => prevCount + 1);
+        }
+    };
     const array_index = 0;
     let temp = []
     let setDistrictArray = []
@@ -60,7 +83,7 @@ const CIBReport = (props) => {
     }
     React.useEffect(() => {
 
-        console.log("test=iam======>>>",allDistrict)
+        console.log("test=iam======>>>", allDistrict)
         // console.log("test=======>>>",getUserData.UserData.StationId)
 
         //     fetchCIBReport('41308-3493070-2').
@@ -127,10 +150,10 @@ const CIBReport = (props) => {
         //console.log(getCustomerRegion)
 
     }
-    
+
     //----------- COMMON METHODS ------------//
-    
-    const  _handleShowData = () => {
+
+    const _handleShowData = () => {
         // alert(JSON.stringify(showMessage?.object?.sLastName))
         // console.log("showMessage===>>>", CIBReportData)
         let get = CIBReportData;
@@ -186,105 +209,105 @@ const CIBReport = (props) => {
         });
 
     }
-    const addCustomer = (cibReportData,e) => {
+    const addCustomer = (cibReportData, e) => {
         console.log(" data===>addCustomer")
-            let get = CIBReportData;
-            let geet = e;
-            let getCustomerData = allDataobj;
-    
-            // //-------------------Set Customer Reducer for Customer Form-------------------//
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_name.value = get.customerFirstName.value;
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_supportingRequiredPerson_name.value = get.customerFirstName.value;
-            getCustomerData.assestsInfo[
-                array_index
-            ].assetOwner.value = get.customerFirstName.value;
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_surname.value = get.customerSurname.value;
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_cnicExpireDate = get.customerNicExpiryDate.value;
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].FamilyNumber.value = get.customerFamilyNumber.value;
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_fatherName.value = get.customerSonOf.value == 1 ? get.customerSonOf.text : "";
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_region = get.customerRegion.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_pre_district.value = get.customerDistrict.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_pre_city.value = get.customerCity.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_mobileNumber.value = get.customerMobileNumber.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_pre_address.value = get.customerAddress.value;
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_cnicNumber.value = get.customerNicNumber.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_dob = get.customerDateOfBirth.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_gender = get.customerGender.value == 1 ? "Male" : get.customerGender.value == 2 ? "Female" : "Transgender"
-            
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_nextKinCnic.value= ""
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_nextKinName.value = ""
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_nextKinOtherRelation.value = ""
-    //support
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_supportingPerson_name.value = ""
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_supportingPerson_cnic.value= ""
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_supportingPerson_relation.value = ""
-    
-    
-            setAlldataobj({ ...getCustomerData });
-        
-// return
-      
+        let get = CIBReportData;
+        let geet = e;
+        let getCustomerData = allDataobj;
 
-// console.log("Before Insert====>>"+JSON.stringify(getCustomerData) )
-// return
+        // //-------------------Set Customer Reducer for Customer Form-------------------//
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_name.value = get.customerFirstName.value;
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_supportingRequiredPerson_name.value = get.customerFirstName.value;
+        getCustomerData.assestsInfo[
+            array_index
+        ].assetOwner.value = get.customerFirstName.value;
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_surname.value = get.customerSurname.value;
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_cnicExpireDate = get.customerNicExpiryDate.value;
+
+        getCustomerData.customerInfo[
+            array_index
+        ].FamilyNumber.value = get.customerFamilyNumber.value;
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_fatherName.value = get.customerSonOf.value == 1 ? get.customerSonOf.text : "";
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_region = get.customerRegion.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_pre_district.value = get.customerDistrict.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_pre_city.value = get.customerCity.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_mobileNumber.value = get.customerMobileNumber.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_pre_address.value = get.customerAddress.value;
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_cnicNumber.value = get.customerNicNumber.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_dob = get.customerDateOfBirth.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_gender = get.customerGender.value == 1 ? "Male" : get.customerGender.value == 2 ? "Female" : "Transgender"
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_nextKinCnic.value = ""
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_nextKinName.value = ""
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_nextKinOtherRelation.value = ""
+        //support
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_supportingPerson_name.value = ""
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_supportingPerson_cnic.value = ""
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_supportingPerson_relation.value = ""
+
+
+        setAlldataobj({ ...getCustomerData });
+
+        // return
+
+
+        // console.log("Before Insert====>>"+JSON.stringify(getCustomerData) )
+        // return
 
         //---------------------------------------------------------------------------
 
@@ -306,110 +329,110 @@ const CIBReport = (props) => {
         //    }    
     }
 
-    const addCustomer2 = (cibReportData,e) => {
-      
+    const addCustomer2 = (cibReportData, e) => {
 
-            let get = CIBReportData;
-            let geet = e;
-            let getCustomerData = allDataobj;
-    
-            // //-------------------Set Customer Reducer for Customer Form-------------------//
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_name.value = get.customerFirstName.value;
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_supportingRequiredPerson_name.value = get.customerFirstName.value;
-            getCustomerData.assestsInfo[
-                array_index
-            ].assetOwner.value = get.customerFirstName.value;
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_surname.value = get.customerSurname.value;
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_cnicExpireDate = get.customerNicExpiryDate.value;
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].FamilyNumber.value = get.customerFamilyNumber.value;
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_fatherName.value = get.customerSonOf.value == 1 ? get.customerSonOf.text : "";
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_region = get.customerRegion.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_pre_district.value = get.customerDistrict.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_pre_city.value = get.customerCity.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_mobileNumber.value = get.customerMobileNumber.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_pre_address.value = get.customerAddress.value;
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_cnicNumber.value = get.customerNicNumber.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_dob = get.customerDateOfBirth.value
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_gender = get.customerGender.value == 1 ? "Male" : get.customerGender.value == 2 ? "Female" : "Transgender"
-            
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_nextKinCnic.value= geet.NextOfKinCNIC
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_nextKinName.value = geet.nextOfKinName
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_nextKinRelation = geet.NextOfKinnRelation
-    //support
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_supportingPerson_name.value = geet.SupportingPersonName
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_supportingPerson_cnic.value = geet.SupportingPersonCnic
-    
-            getCustomerData.customerInfo[
-                array_index
-            ].customer_supportingPerson_relation.value = geet.SupportingPersonRelation
 
-            getCustomerData.customerInfo[
-                array_index
-            ].customer = geet.customer
-    
-    
-            setAlldataobj({ ...getCustomerData });
-        
-  
-      
+        let get = CIBReportData;
+        let geet = e;
+        let getCustomerData = allDataobj;
 
-// console.log("Before Insert====>>"+JSON.stringify(getCustomerData.customerInfo) )
-// return
+        // //-------------------Set Customer Reducer for Customer Form-------------------//
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_name.value = get.customerFirstName.value;
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_supportingRequiredPerson_name.value = get.customerFirstName.value;
+        getCustomerData.assestsInfo[
+            array_index
+        ].assetOwner.value = get.customerFirstName.value;
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_surname.value = get.customerSurname.value;
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_cnicExpireDate = get.customerNicExpiryDate.value;
+
+        getCustomerData.customerInfo[
+            array_index
+        ].FamilyNumber.value = get.customerFamilyNumber.value;
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_fatherName.value = get.customerSonOf.value == 1 ? get.customerSonOf.text : "";
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_region = get.customerRegion.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_pre_district.value = get.customerDistrict.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_pre_city.value = get.customerCity.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_mobileNumber.value = get.customerMobileNumber.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_pre_address.value = get.customerAddress.value;
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_cnicNumber.value = get.customerNicNumber.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_dob = get.customerDateOfBirth.value
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_gender = get.customerGender.value == 1 ? "Male" : get.customerGender.value == 2 ? "Female" : "Transgender"
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_nextKinCnic.value = geet.NextOfKinCNIC
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_nextKinName.value = geet.nextOfKinName
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_nextKinRelation = geet.NextOfKinnRelation
+        //support
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_supportingPerson_name.value = geet.SupportingPersonName
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_supportingPerson_cnic.value = geet.SupportingPersonCnic
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer_supportingPerson_relation.value = geet.SupportingPersonRelation
+
+        getCustomerData.customerInfo[
+            array_index
+        ].customer = geet.customer
+
+
+        setAlldataobj({ ...getCustomerData });
+
+
+
+
+        // console.log("Before Insert====>>"+JSON.stringify(getCustomerData.customerInfo) )
+        // return
 
         //---------------------------------------------------------------------------
 
@@ -432,7 +455,7 @@ const CIBReport = (props) => {
     }
 
     //----------- COMMON METHODS END ------------//
-   
+
     // ---------- CIB Report Methods ------------
 
     const submitEnquiryProcess = () => {
@@ -627,31 +650,32 @@ const CIBReport = (props) => {
 
             // return
 
-            generatingCIB(enquiryData ,getUserData.UserData.OrganizationType)
+            generatingCIB(enquiryData, getUserData.UserData.OrganizationType)
                 .then((e) => {
 
                     if (e?.Return) {
-                    getCustomerNextKin(get.customerNicNumber.value).
-                    then((response) => {
-                    
-                        fetchCIBReport(get.customerNicNumber.value).
-                        
-                            then((e) => {
-                                setToast({
-                                    type: "success",
-                                    message: e?.Message,
-                                });
-                                if (response.statusCode == 201){
+                        getCustomerNextKin(get.customerNicNumber.value).
+                            then((response) => {
 
-                                    setCibReportResponse(e ,response)
-                                    
-                                    addCustomer(e ,response)
-                                }else{
-                                    setCibReportResponse(e ,response)
-                                    
-                                    addCustomer2(e ,response)
-                                }
-                            }) }).
+                                fetchCIBReport(get.customerNicNumber.value).
+
+                                    then((e) => {
+                                        setToast({
+                                            type: "success",
+                                            message: e?.Message,
+                                        });
+                                        if (response.statusCode == 201) {
+
+                                            setCibReportResponse(e, response)
+
+                                            addCustomer(e, response)
+                                        } else {
+                                            setCibReportResponse(e, response)
+
+                                            addCustomer2(e, response)
+                                        }
+                                    })
+                            }).
                             catch((e) => {
                                 console.log("generatingCIBError===>", e)
                                 setToast({
@@ -924,35 +948,36 @@ const CIBReport = (props) => {
 
             generatingCIR(enquiryData, getUserData.UserData.OrganizationType)
                 .then((e) => {
-                 
+
 
                     if (e?.Return) {
 
                         getCustomerNextKin(get.customerNicNumber.value).
-                        then((response) => {
-                            console.log("Cir Kins lol"+JSON.stringify(response) )
-                          
-                        fetchCIRReport(get.customerNicNumber.value).
-                            then((e) => {
-                               
-                                setToast({
-                                    type: "success",
-                                    message: e?.Message,
-                                });
+                            then((response) => {
+                                console.log("Cir Kins lol" + JSON.stringify(response))
 
-                                if (response.statusCode == 201){
+                                fetchCIRReport(get.customerNicNumber.value).
+                                    then((e) => {
 
-                                    setCibReportResponse(e ,response)
-                                    
-                                    addCustomer(e ,response)
-                                }else{
-                                    setCibReportResponse(e ,response)
-                                    
-                                    addCustomer2(e ,response)
-                                }
+                                        setToast({
+                                            type: "success",
+                                            message: e?.Message,
+                                        });
 
-                              
-                         }) }).
+                                        if (response.statusCode == 201) {
+
+                                            setCibReportResponse(e, response)
+
+                                            addCustomer(e, response)
+                                        } else {
+                                            setCibReportResponse(e, response)
+
+                                            addCustomer2(e, response)
+                                        }
+
+
+                                    })
+                            }).
                             catch((e) => {
                                 console.log("generatingCIRError============>", e)
                                 setToast({
@@ -975,7 +1000,7 @@ const CIBReport = (props) => {
                     }
                     setToast({
                         type: "error",
-                        message:e?.Message,
+                        message: e?.Message,
                     });
 
 
@@ -1009,35 +1034,35 @@ const CIBReport = (props) => {
             }
             if (value?.length == 15) {
                 setCheckingLoader(true)
-                if(reportType == "CIR"){
-                checkingCIRCustomerbyCnic({ CNICNumber: value }).then((res) => {
-                    setCheckingLoader(false)
-                    if (res?.Return) {
-                        setShowMessage({ msg: res?.Message, value: true, object: res?.AppData })
-                    } else {
-                        setShowMessage({ msg: res?.Message, value: false, object: undefined })
-                        console.log("res-->", res)
+                if (reportType == "CIR") {
+                    checkingCIRCustomerbyCnic({ CNICNumber: value }).then((res) => {
+                        setCheckingLoader(false)
+                        if (res?.Return) {
+                            setShowMessage({ msg: res?.Message, value: true, object: res?.AppData })
+                        } else {
+                            setShowMessage({ msg: res?.Message, value: false, object: undefined })
+                            console.log("res-->", res)
 
-                    }
+                        }
 
-                }).catch((err) => {
-                    setCheckingLoader(false)
-                })
-            }else{
-                checkingCIBCustomerbyCnic({ CNICNumber: value }).then((res) => {
-                    setCheckingLoader(false)
-                    if (res?.Return) {
-                        setShowMessage({ msg: res?.Message, value: true, object: res?.AppData })
-                    } else {
-                        setShowMessage({ msg: res?.Message, value: false, object: undefined })
-                        console.log("res-->", res)
+                    }).catch((err) => {
+                        setCheckingLoader(false)
+                    })
+                } else {
+                    checkingCIBCustomerbyCnic({ CNICNumber: value }).then((res) => {
+                        setCheckingLoader(false)
+                        if (res?.Return) {
+                            setShowMessage({ msg: res?.Message, value: true, object: res?.AppData })
+                        } else {
+                            setShowMessage({ msg: res?.Message, value: false, object: undefined })
+                            console.log("res-->", res)
 
-                    }
+                        }
 
-                }).catch((err) => {
-                    setCheckingLoader(false)
-                })
-            }
+                    }).catch((err) => {
+                        setCheckingLoader(false)
+                    })
+                }
             }
         }
 
@@ -1073,7 +1098,7 @@ const CIBReport = (props) => {
                     <TextInput
                         value={checkingCnic}
                         placeholder={'Enter Cnic'}
-                        onChangeText={(text) => reportType == "CIB"? _handleCnic(text) : _handleCirCnic(text)}
+                        onChangeText={(text) => reportType == "CIB" ? _handleCnic(text) : _handleCirCnic(text)}
                         keyboardType={'number-pad'}
                         style={styles.textInput1} />
 
@@ -1552,7 +1577,7 @@ const CIBReport = (props) => {
                             required={true}
                             //Requirement from Nevved status Only Inquiry Processing
                             // tempdata={["Rejected", "Inquiry Processing", "Granted"]}
-                            tempdata={["","Inquiry Processing"]}
+                            tempdata={["", "Inquiry Processing"]}
                             label={
 
                                 CIBReportData.loanStatus.value == "" || CIBReportData.loanStatus.value == undefined ? 'Select Status' : CIBReportData.loanStatus.value
@@ -1625,6 +1650,106 @@ const CIBReport = (props) => {
                             }}></FormInputs>
 
                     </View>
+                    {reportType === "CIB" && (
+                        <>
+                            <TextView style={[styles.text1]} text={"Kins Information"} ></TextView>
+
+                            <View style={{ flexDirection: 'row', alignItems: 'center', left: 12 }}>
+                                <Checkbox color={Colors.parrotGreenColor} status={isRequiredSelected ? 'checked' : 'unchecked'}
+                                    onPress={() => setIsRequiredSelected(prevState => !prevState)}
+                                />
+                                <Text >Mark fields as required</Text>
+                            </View>
+
+                            {CIBReportDataa.slice(0, fieldCount).map((data, index) => (
+                                <>
+                                    <View key={index} style={[styles.row, { marginTop: 20, marginLeft: 10, marginRight: 10 }]}>
+
+                                        <FormInputs
+                                            keyboardtype={'default'}
+                                            required={isRequiredSelected && index < 1} // Set required prop based on checkbox selection and index
+                                            text={'First Name'}
+                                            error={data.firstname.error}
+                                            value={data.firstname.value}
+                                            onChangeText={(value: string) => {
+                                                setCIBReportData((prevData) => {
+                                                    const updatedData = [...prevData];
+                                                    updatedData[index].firstname = value;
+                                                    return updatedData;
+                                                });
+                                            }}
+                                        />
+
+                                        <FormInputs
+                                            keyboardtype={'default'}
+                                            required={isRequiredSelected && index < 1}
+                                            text={'Middle Name'}
+                                            error={data.middlename.error}
+                                            value={data.middlename.value}
+                                            onChangeText={(value: string) => {
+                                                setCIBReportData((prevData) => {
+                                                    const updatedData = [...prevData];
+                                                    updatedData[index].middlename = value;
+                                                    return updatedData;
+                                                });
+                                            }}
+                                        />
+                                    </View>
+
+                                    <View key={index} style={[styles.row, { marginTop: 20, marginLeft: 10, marginRight: 10 }]}>
+
+                                        <FormInputs
+                                            keyboardtype={'default'}
+                                            required={isRequiredSelected && index < 1}
+                                            text={'Last Name'}
+                                            error={data.lastname.error}
+                                            value={data.lastname.value}
+                                            onChangeText={(value: string) => {
+                                                setCIBReportData((prevData) => {
+                                                    const updatedData = [...prevData];
+                                                    updatedData[index].lastname = value;
+                                                    return updatedData;
+                                                });
+                                            }}
+                                        />
+
+                                        <FormInputs
+                                            keyboardtype={'number-pad'}
+                                            text={'Kin CNIC'}
+                                            required={isRequiredSelected && index < 1}
+                                            value={data.kinNicNumber}
+                                            onChangeText={(value: string) => {
+                                                var regexp = new RegExp('^[0-9+]{5}-[0-9+]{7}-[0-9]{1}$');
+                                                if (value.length < 16) {
+                                                    let updatedValue = value;
+                                                    if (value.length === 5 || value.length === 13) {
+                                                        updatedValue = value + '-';
+                                                    }
+                                                    setCIBReportData((prevData) => {
+                                                        const updatedData = [...prevData];
+                                                        updatedData[index].kinNicNumber = updatedValue;
+                                                        return updatedData;
+                                                    });
+
+                                                    let getCustomerData = allDataobj;
+                                                    getCustomerData.customerInfo[array_index].customer_cnicNumber = updatedValue;
+                                                    setAlldataobj({ ...getCustomerData });
+                                                }
+                                            }}
+                                        />
+
+                                    </View>
+                                </>
+                            ))}
+                            <View style={{ width: '100%', flex: 1, justifyContent: 'center', alignItems: 'flex-end', right: 10 }}>
+                                <TouchableOpacity onPress={addFields} style={styles.addButton} disabled={fieldCount === 4}>
+                                    <Text style={styles.addButtonText}>+</Text>
+                                </TouchableOpacity>
+                            </View>
+
+
+                        </>
+                    )}
 
 
                     <TextView
@@ -1713,8 +1838,8 @@ const CIBReport = (props) => {
                     </TouchableOpacity>
 
                     {checkEnquiryAdded &&
-                      
-                      <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginLeft: 20, marginRight: 20 }}>
+
+                        <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginLeft: 20, marginRight: 20 }}>
                             {reportType == "CIB" ?
 
                                 <TouchableOpacity
@@ -1747,21 +1872,25 @@ const CIBReport = (props) => {
                 :
                 <View>
                     <TextView text={"Selection of Report"}
-                        style={{ color: Colors.light_dark_gray,
-                         fontSize: 20, marginTop: height / 4, marginLeft: 30 }}></TextView>
-                    <View style={{ flexDirection: 'row'
-                    , alignItems: 'center', justifyContent: 'space-between', margin: 20 }}>
+                        style={{
+                            color: Colors.light_dark_gray,
+                            fontSize: 20, marginTop: height / 4, marginLeft: 30
+                        }}></TextView>
+                    <View style={{
+                        flexDirection: 'row'
+                        , alignItems: 'center', justifyContent: 'space-between', margin: 20
+                    }}>
 
-                        <TouchableOpacity 
-                        onPress={() => setReportType("CIB")}
-                        style={styles.selectionButton}>
+                        <TouchableOpacity
+                            onPress={() => setReportType("CIB")}
+                            style={styles.selectionButton}>
 
                             <TextView text={"Data Check"} style={styles.selectiontxt}></TextView>
                         </TouchableOpacity>
-                        <TouchableOpacity 
-                        onPress={() => setReportType("CIR")}
-                        
-                        style={styles.selectionButton}>
+                        <TouchableOpacity
+                            onPress={() => setReportType("CIR")}
+
+                            style={styles.selectionButton}>
                             <TextView text={"Tasdeeq"} style={styles.selectiontxt}></TextView>
 
                         </TouchableOpacity>
@@ -1783,7 +1912,7 @@ const CIBReport = (props) => {
             >
                 <View style={{ paddingTop: 30 }}>
 
-                    <CirView reportDetail = {cibReportResponse}/>
+                    <CirView reportDetail={cibReportResponse} />
 
                 </View>
             </Modalize>
@@ -1835,4 +1964,7 @@ const styles = StyleSheet.create({
         borderWidth: 1, borderColor: Colors.green, justifyContent: 'center'
     },
     selectiontxt: { fontSize: 20, alignSelf: 'center', color: Colors.green },
+    addButton: {  width: 40, height: 40,  backgroundColor: '#130C52',borderRadius: 5, alignItems: 'center', justifyContent: 'center',  },         
+    addButtonText: {  fontSize: 30, fontWeight: 'bold', color: 'white'},   
+    heading: {fontSize: 18,fontWeight: 'bold',marginBottom: 10,},
 })

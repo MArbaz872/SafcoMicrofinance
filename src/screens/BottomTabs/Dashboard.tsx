@@ -45,7 +45,7 @@ import { FONTS } from '../../theme/Fonts';
 import {NativeModules} from 'react-native';
 import NumberFormater from '../../utilis/NumberFormater';
 import { getDailyCollectionReport } from '../../apis_auth/apis';
-import { getDailyCollectionReportBm } from '../../apis_auth/apis';
+import { getDailyCollectionReportBm , getDailyCollectionReportRm ,getDailyCollectionReportZm } from '../../apis_auth/apis';
 import { Value } from 'react-native-reanimated';
 
 
@@ -66,6 +66,9 @@ const Dashboard: () => Node = () => {
   const [progressVisible, setProgressVisible] = React.useState(false)
 
   const [exitApp, setExitApp] = React.useState(0);
+  const [loCollection , setloCollection] = React.useState('0.00')
+
+  // console.log("loCollection=======>",loCollection)
 
   const [dashboardObj, setDashboardObj] = React.useState(
 
@@ -169,17 +172,41 @@ const Dashboard: () => Node = () => {
 React.useEffect(()=>{
   {getUserData.UserData.EmployeeTypeName == "Credit Officer"  && getDailyCollectionReport(StationReducer.station.stationId,getUserData.UserData.EmployeeId,getUserData.UserData.EmployeeTypeId, setDailyCollectionReport, setNoDailyCollectionData, setProgressVisible).then((value) => {
     let data = value.data;
+    console.log("Here====>",data)
     if (data == 'No Record Found') {
       setToast({
             type: "error",
             message: '' + data,
         });
     } else {
+      // setloCollection(value)
         navigation.navigate('Dashbordreport', { report: value });
     }
 })}
 
 { getUserData.UserData.EmployeeTypeName == "Branch Manager" && getDailyCollectionReportBm(StationReducer.station.stationId,getUserData.UserData.EmployeeId,getUserData.UserData.EmployeeTypeId, setDailyCollectionReport, setNoDailyCollectionData, setProgressVisible).then((value) => {
+  let data = value.data;
+  if (data == 'No Record Found') {
+    setToast({
+          type: "error",
+          message: '' + data,
+      });
+  } else {
+      navigation.navigate('Dashbordreport', { report: value });
+  }
+})}
+{ getUserData.UserData.EmployeeTypeName == "Area Manager" && getDailyCollectionReportRm(StationReducer.station.stationId,getUserData.UserData.EmployeeId,getUserData.UserData.EmployeeTypeId, setDailyCollectionReport, setNoDailyCollectionData, setProgressVisible).then((value) => {
+  let data = value.data;
+  if (data == 'No Record Found') {
+    setToast({
+          type: "error",
+          message: '' + data,
+      });
+  } else {
+      navigation.navigate('Dashbordreport', { report: value });
+  }
+})}
+{ getUserData.UserData.EmployeeTypeName == "Manager Operation" && getDailyCollectionReportZm(StationReducer.station.stationId,getUserData.UserData.EmployeeId,getUserData.UserData.EmployeeTypeId, setDailyCollectionReport, setNoDailyCollectionData, setProgressVisible).then((value) => {
   let data = value.data;
   if (data == 'No Record Found') {
     setToast({
@@ -313,6 +340,7 @@ React.useEffect(()=>{
               shade2={Colors.darkGreenColor}
               icon="person"></Dashboardcard>
           </View>
+          
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <TextView
               text={`Active Client Data (${dashboardObj?.ActiveLoans==null ? 0:dashboardObj?.ActiveLoans})`}

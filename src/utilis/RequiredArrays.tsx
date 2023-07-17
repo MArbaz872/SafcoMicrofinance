@@ -689,6 +689,7 @@ export const CibReportsArray =
     customerMobileNumber:{value:"", error:""},
     customerNotes:{value:"", error:""},
     customerAddedOn:{value:"", error:""},
+ 
   }
 export const CIBTEMP ={
   

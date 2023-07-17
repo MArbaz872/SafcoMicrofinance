@@ -12,58 +12,17 @@ import {
 const BmDaillyReportTableComponent = ({item})=>{
     return(
         <View>
-        <View style={styles.tableContainer}>
-        <View style={styles.rowTwo}>
-            <View style={styles.columnOne}>
-            <TextView style={styles.columnOneText} text={'Station Name'} />
-            </View>
-            <View style={styles.columnTwo}>
-            <TextView  style={styles.columnTwoText} text={item.StationName} />
-            </View>
-        </View>
-        <View style={styles.rowOne}>
-            <View style={styles.columnOne}>
-            <TextView style={styles.columnOneText} text={'Employee Name'} />
-            </View>
-            <View style={styles.columnTwo}>
+         <View style={styles.tableRow}>
+          <View style={styles.tableCell}>
+            <TextView style={styles.columnTwoText} text={item.StationName} />
+          </View>
+          <View style={styles.tableCell}>
             <TextView style={styles.columnTwoText} text={item.EmployeeName} />
-            </View>
-        </View>
-        <View style={styles.rowTwo}>
-            <View style={styles.columnOne}>
-            <TextView style={styles.columnOneText} text={'RepaymentAmount'} />
-            </View>
-            <View style={styles.columnTwo}>
+          </View>
+          <View style={styles.tableCell}>
             <TextView style={styles.columnTwoText} text={item.RepaymentAmount} />
-            </View>
-        </View>
-    </View>
-   <View style={{flexDirection:'row',alignItems:'center'}}>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-       <TriangleDown/>
-
-
-   </View>
+          </View>
+        </View>     
     </View>
     )
 }
@@ -89,13 +48,6 @@ const styles = StyleSheet.create({
       triangleDown: {
         transform: [{ rotate: "180deg" }],
       },
-    tableContainer:{
-        marginTop:30,
-        borderWidth:1,
-        backgroundColor:'#FFF',
-        borderColor:"#cdcdcd",
-        borderRadius:5
-    },
     rowOne:{
         flexDirection:'row',
         //borderBottomColor:'#cdcdcd',borderBottomWidth:1
@@ -124,7 +76,18 @@ const styles = StyleSheet.create({
     },
     columnTwoText:{
         fontSize:12
-    }
+    },
+    tableRow: {
+        flexDirection: 'row',
+      },
+      tableCell: {
+        flex: 1,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }
 })
 
 export default memo(BmDaillyReportTableComponent)

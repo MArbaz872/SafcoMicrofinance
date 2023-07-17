@@ -754,6 +754,7 @@ const Header = ({ Theme, back = false, screenNo, noBack = false }) => {
                         customerMobileNumber:{value:"", error:""},
                         customerNotes:{value:"", error:""},
                         customerAddedOn:{value:"", error:""},
+                       
                       
                 }
             });

@@ -18,8 +18,8 @@ import {
   TouchableOpacity,
   RefreshControl,
   NativeModules,
-  Pressable
-} from 'react-native';
+  Pressable,
+  Text} from 'react-native';
 const { FingerModule } = NativeModules;
 import RNFS from 'react-native-fs';
 import moment from 'moment';
@@ -84,6 +84,11 @@ const LoanVerficationSyncupandSyncdown: () => Node = (props) => {
   const [searchData, setSearchData] = React.useState([])
   const [customerModalVisible, setCustomerModalVisible] = useState(false);
   const [CustomeerView, setCustomeerViewResponse] = useState(undefined);
+  const [RejectItem, setRejectItem] = useState('');
+  const [RejectModalVisible, setRejectModalVisible] = useState(false);
+  const [RejectComment, setRejectComment] = useState('');
+
+// console.log("here RejectComment----------->",RejectComment)
 
   const [container, setContainer] = React.useState(
     {
@@ -2202,52 +2207,22 @@ const LoanVerficationSyncupandSyncdown: () => Node = (props) => {
     setLoading(true)
     fetchData()
   }
+ 
 
   const renderItem = ({ item, index }) => (
     <CustomerRecorditems item={item}
       UserData={UserData}
-      onPressReject={() => {
-        if(item.group_id != ''){
-          RejectuploadingCustomerdata (item.group_id).then(async(res)=>{
-            console.log("here i'am now",res.data.StatusCode)
-            if(res.data.StatusCode == 200){
-              setprogressVisible(true)
-              setTitle("Rejecting...")
-              DeleteCustomerForms(item.id, item.user_cnic)
-                .then((value) => {
-                  DeleteDocImages(item.user_cnic).then(() => {
-                    DeleteAssetsImages(item.user_cnic).then(() => {
-                      setprogressVisible(false)
-                      setTitle("Deleting..")
-                      setToast({
-                        type: "success",
-                        message: "Reject Customer Successfully",
-                      });
-                      let get2 = getForms;
-                      get2.splice(index, 1);
-                      setFroms(get2);
-                      setFromsOrignal(get2);
-                      fetchData()
-                    })
-                  })
-                })
-                .catch(() => {
-  
-                })
-            }else(
-              alert("Already Reject...")
-            )
-          })
-
-        }else{
-          // alert("Customer which bleongs to a group can not be reajected")
-          setToast({
-            type: "Alert",
-            message: "Customer which bleongs to a group can not be reajected.",
-          });
-        }
+     
+      onPressReject={() => { Alert.alert("Await!","Do you really want to Reject?",[{text:"Yes",onPress:()=>{
+        
+        setRejectItem(item)
+        setRejectModalVisible(true)
        
-      }}
+          }},{text:"No",onPress:()=>{
+        
+          }}])}}
+          
+          
       onPressIn={() => {
         if (StationReducer.station == "") {
 
@@ -2437,6 +2412,53 @@ const LoanVerficationSyncupandSyncdown: () => Node = (props) => {
       console.log(error)
     })
   }
+  const handleCommentChange = (text) => {
+    setRejectComment(text);
+  };
+  const handleReject =(RejectItem,RejectComment) => {
+
+        if(RejectItem.group_id != ''){
+          RejectuploadingCustomerdata (RejectItem.group_id,RejectComment).then(async(res)=>{
+            console.log("here i'am now",res.data.StatusCode)
+            if(res.data.StatusCode == 200){
+              setprogressVisible(true)
+              setTitle("Rejecting...")
+              DeleteCustomerForms(RejectItem.id, RejectItem.user_cnic)
+                .then((value) => {
+                  DeleteDocImages(RejectItem.user_cnic).then(() => {
+                    DeleteAssetsImages(RejectItem.user_cnic).then(() => {
+                      setprogressVisible(false)
+                      setTitle("Deleting..")
+                      setToast({
+                        type: "success",
+                        message: "Reject Customer Successfully",
+                      });
+                      let get2 = getForms;
+                      get2.splice(index, 1);
+                      setFroms(get2);
+                      setFromsOrignal(get2);
+                      fetchData()
+                    })
+                  })
+                })
+                .catch(() => {
+  
+                })
+            }else(
+              alert("Already Reject...")
+            )
+          })
+
+        }else{
+          // alert("Customer which bleongs to a group can not be reajected")
+          setToast({
+            type: "Alert",
+            message: "Customer which bleongs to a group can not be reajected.",
+          });
+        }
+       
+    
+  }
 
   return (
     <SafeAreaView style={styles.safeview}>
@@ -2618,7 +2640,6 @@ const LoanVerficationSyncupandSyncdown: () => Node = (props) => {
           setCustomerModalVisible(false);
           //console.log('Modal has been closed.');
         }}>
-        {/* <View style={{flex:1}}> */}
         
           <Pressable style={{alignItems:'flex-end', padding:20}}
           onPress={()=>setCustomerModalVisible(false)}
@@ -2630,12 +2651,45 @@ const LoanVerficationSyncupandSyncdown: () => Node = (props) => {
             <ScrollView>
             
            
-              <CustomerViews customertDetails={CustomeerView} />
+              {/* <CustomerViews customertDetails={CustomeerView} /> */}
          
             </ScrollView>
             </View>
-{/* 
+      </Modal>
 
+
+      <Modal
+        animationType={'fade'}
+        //transparent={true}
+        visible={RejectModalVisible}
+        onRequestClose={() => {
+          setRejectModalVisible(false);
+          //console.log('Modal has been closed.');
+        }}>
+        {/* <View style={{flex:1}}> */}
+        <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+        <Pressable style={{ alignItems: 'flex-end'}}
+          onPress={() => setRejectModalVisible(false)}
+        >
+          <EvilIcons name={'close'} size={30} color={'red'} />
+        </Pressable>
+          <Text style={styles.rejecttitle}>Why you Reject this Customer ?</Text>
+          <TextInput
+            placeholder="Enter your comment"
+            onChangeText={handleCommentChange}
+            value={RejectComment}
+            style={[styles.input, { textAlignVertical: 'top' }]}
+            multiline={true}
+            numberOfLines={10} // Specify the number of lines to display
+          />
+
+          <TouchableOpacity style={styles.button}  onPress={() => handleReject(RejectItem,RejectComment)}>
+            <Text style={styles.buttonText}>Submit</Text> 
+          </TouchableOpacity>
+        </View>
+       
+             </View>
 
         {/* </View> */}
 
@@ -2671,6 +2725,58 @@ const styles = StyleSheet.create({
   circle: {
     height: 30, width: 30, borderRadius: 100, marginLeft: 0, marginRight: 10,
     justifyContent: 'center', backgroundColor: '#f1f1f1'
+  },
+  modalContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  
+  },
+  input: {
+    height: 100,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginTop:15
+  },
+  button: {
+    backgroundColor: '#130C52',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
+    
+  },
+  closeButtonText: {
+    fontSize: 30,
+    fontWeight: '600',
+    color:'red'
+  },
+  rejecttitle:{
+    top:10,
+    padding:0,
+    fontSize:14,
+    fontWeight:'600'
   }
+
 })
 

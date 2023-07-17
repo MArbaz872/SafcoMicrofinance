@@ -14,11 +14,12 @@ import {
   ActivityIndicator,
   View, TouchableOpacity,
   RefreshControl,
-  NativeModules
+  NativeModules,
+  Text
 } from 'react-native';
 const { FingerModule } = NativeModules;
 import RNFS from 'react-native-fs';
-
+import { Modal } from 'react-native';
 import moment from 'moment'
 import { Card } from 'react-native-paper'
 import { AppStatusBar, CustomerRecorditems, CustomProgressDialoge, Header, Nodata, Search, TextView } from '../../components';
@@ -39,6 +40,7 @@ import { CallforTags, CheckingTags, deleteLoanOfficerdata, getObjectbyBranchMana
 import Toast from '../../components/Toast';
 import DateChips from '../../components/DateChips';
 import { ApplicationVersion, releaseDate } from '../../utilis/ContsValues';
+import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 const LoanVerficationGroup: () => Node = (props) => {
   let customerSyncUpDatas = [];
@@ -70,6 +72,9 @@ const LoanVerficationGroup: () => Node = (props) => {
   const [RejectChecker, setRejectChecker] = React.useState(true)
   const [UserData, setUserData] = React.useState(undefined);
   const getUserData = useSelector((state) => state.UserData);
+  const [RejectItem, setRejectItem] = useState('');
+  const [RejectModalVisible, setRejectModalVisible] = useState(false);
+  const [RejectComment, setRejectComment] = useState('');
 
   React.useEffect(async () => {
 
@@ -2788,16 +2793,50 @@ const LoanVerficationGroup: () => Node = (props) => {
       { text: "No" }
     ])
   }
-  const handleReject = (item) => {
-    RejectuploadingCustomerdata (item.group_id).then(async(res)=>{
-      console.log("here i'am now",res.data.StatusCode)
-      if(res.data.StatusCode == 200){
-        deleteRow2(item, false)
-      }else(
-        alert("Already Reject...")
-      )
-    })
-  }
+  const handleReject =(RejectItem,RejectComment) => {
+
+    if(RejectItem.group_id != ''){
+      RejectuploadingCustomerdata (RejectItem.group_id,RejectComment).then(async(res)=>{
+        console.log("here i'am now",res.data.StatusCode)
+        if(res.data.StatusCode == 200){
+          setprogressVisible(true)
+          setTitle("Rejecting...")
+          DeleteCustomerForms(RejectItem.id, RejectItem.user_cnic)
+            .then((value) => {
+              DeleteDocImages(RejectItem.user_cnic).then(() => {
+                DeleteAssetsImages(RejectItem.user_cnic).then(() => {
+                  setprogressVisible(false)
+                  setTitle("Deleting..")
+                  setToast({
+                    type: "success",
+                    message: "Reject Customer Successfully",
+                  });
+                  let get2 = getForms;
+                  get2.splice(index, 1);
+                  setFroms(get2);
+                  setFromsOrignal(get2);
+                  fetchData()
+                })
+              })
+            })
+            .catch(() => {
+
+            })
+        }else(
+          alert("Already Reject...")
+        )
+      })
+
+    }else{
+      // alert("Customer which bleongs to a group can not be reajected")
+      setToast({
+        type: "Alert",
+        message: "Customer which bleongs to a group can not be reajected.",
+      });
+    }
+   
+
+}
     // Alert.alert("Syncup?", "Do you really want to Reject?", [
     //   { text: 'Yes', onPress: () => { RejectuploadingCustomerdata (item.group_id) } },
     //   { text: "No" }
@@ -2882,6 +2921,9 @@ const LoanVerficationGroup: () => Node = (props) => {
     console.log("checking Version Error")
   })
   }
+    const handleCommentChange = (text) => {
+    setRejectComment(text);
+  };
  
   const renderItem = ({ item, index }) => (
 
@@ -2893,12 +2935,14 @@ const LoanVerficationGroup: () => Node = (props) => {
         handleSyncup(item, index)
 
       }}
-      onPressReject={() => {
-        // alert(JSON.stringify(item))
-        // return
-        handleReject(item, index)
-
-      }}
+      onPressReject={() => { Alert.alert("Await!","Do you really want to Reject?",[{text:"Yes",onPress:()=>{
+        
+        setRejectItem(item)
+        setRejectModalVisible(true)
+       
+          }},{text:"No",onPress:()=>{
+        
+          }}])}}
 
       onPress={
         async () => {
@@ -3118,6 +3162,45 @@ const LoanVerficationGroup: () => Node = (props) => {
         title={dialogeCount}
         message="Please, wait..."
       /> */}
+      <Modal
+        animationType={'fade'}
+        //transparent={true}
+        visible={RejectModalVisible}
+        onRequestClose={() => {
+          setRejectModalVisible(false);
+          //console.log('Modal has been closed.');
+        }}>
+        {/* <View style={{flex:1}}> */}
+        <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+        <Pressable style={{ alignItems: 'flex-end'}}
+          onPress={() => setRejectModalVisible(false)}
+        >
+          <EvilIcons name={'close'} size={30} color={'red'} />
+        </Pressable>
+          <Text style={styles.rejecttitle}>Why you Reject this Group?</Text>
+          <TextInput
+            placeholder="Enter your comment"
+            onChangeText={handleCommentChange}
+            value={RejectComment}
+            style={[styles.input, { textAlignVertical: 'top' }]}
+            multiline={true}
+            numberOfLines={10} // Specify the number of lines to display
+          />
+
+          <TouchableOpacity style={styles.button}  onPress={() => handleReject(RejectItem,RejectComment)}>
+            <Text style={styles.buttonText}>Submit</Text> 
+          </TouchableOpacity>
+        </View>
+       
+             </View>
+
+        {/* </View> */}
+
+
+
+
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -3145,6 +3228,57 @@ const styles = StyleSheet.create({
   circle: {
     height: 30, width: 30, borderRadius: 100, marginLeft: 0, marginRight: 10,
     justifyContent: 'center', backgroundColor: '#f1f1f1'
+  },  modalContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  
+  },
+  input: {
+    height: 100,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginTop:15
+  },
+  button: {
+    backgroundColor: '#130C52',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
+    
+  },
+  closeButtonText: {
+    fontSize: 30,
+    fontWeight: '600',
+    color:'red'
+  },
+  rejecttitle:{
+    top:10,
+    padding:0,
+    fontSize:14,
+    fontWeight:'600'
   }
+
 })
 

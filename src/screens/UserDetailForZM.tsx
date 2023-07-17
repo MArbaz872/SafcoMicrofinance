@@ -34,8 +34,6 @@ const UserDetailForZM = (props) => {
     }
 
 
-    // console.log(Data)
-
 
 
     React.useEffect(() => {

@@ -21,7 +21,7 @@ const GeneratedReport = ({ route }) => {
     const AppFolder = 'Safco_reactapp'; 
 
     React.useEffect(() => {
-        console.log("report==>"+report)
+        // console.log("report==>"+report)
         
     }, [])
     //console.log(route.params.report.LoanDetails)

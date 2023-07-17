@@ -31,6 +31,7 @@ const CustomeerViews = (({ customertDetails }) => {
     const [customerReport, setCustomerReport] = React.useState(customertDetails);
     const [activeTab, setActiveTab] = React.useState(1);
     const GETQuestions = useSelector(state => state.QuestionsReducer.questionArray);
+    const [error, setError] = React.useState(false)
     const [questionArray, setQuestionArray] = React.useState(GETQuestions)
     const Data = customerReport != undefined ? customerReport.assestsInfo : [];
     const DataArray = customerReport != undefined ? customerReport.familyMemberInfo : [];
@@ -48,9 +49,11 @@ const CustomeerViews = (({ customertDetails }) => {
 
     // console.log("Documents images------->",JSON.stringify (allDataobj))
 
-
+    const _onImageLoadError = (event) => {
+        setError(true)
+    }
     const renderDocsItems = (item, indexx) => {
-        console.log("Itemmm====>",item.imgName)
+        // console.log("Imagess===>,",customerReport?.loanInfo[0]?.loan_customerImage[indexx]. )
         return <View style={{ width: customerReport.loanInfo[0].loan_customerImage.length <= 1 ? width / 1.2 : width / 2.3 }}>
             <View
                 style={{
@@ -68,16 +71,21 @@ const CustomeerViews = (({ customertDetails }) => {
                         justifyContent: 'center',
                     }}>
                     {item.imgValue == undefined ? (
-                        <MaterialCommunityIcons
-                            style={{ alignSelf: 'center' }}
-                            name="google-photos"
-                            size={56}></MaterialCommunityIcons>
+                        // <MaterialCommunityIcons
+                        //     style={{ alignSelf: 'center' }}
+                        //     name="google-photos"
+                        //     size={56}></MaterialCommunityIcons>
+                        <Image
+                        source={require('../assests/images/placeholder.png')}
+                        style={{ width: '100%', height: height / 3.5, resizeMode: 'contain' }}
+                    />
                     ) : (
                         <ImageComponent
                             imgValue={item.imgValue}
                             error={customerReport?.loanInfo[0]?.loan_customerImage[indexx].imgName.error}
                             value={customerReport?.loanInfo[0]?.loan_customerImage[indexx].imgName.value}
                         />
+                    
                     )}
 
                 </View>

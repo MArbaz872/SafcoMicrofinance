@@ -815,7 +815,7 @@ export const uploadingCustomerdata = (item: any, setProgressVisible: { (value: R
   return promise;
 }
 
-export const RejectuploadingCustomerdata = (group_id) => {
+export const RejectuploadingCustomerdata = (group_id,RejectComment) => {
 
   const promise = new Promise((resolve, reject) => {
     NetInfo.fetch().then(state => {
@@ -826,12 +826,12 @@ export const RejectuploadingCustomerdata = (group_id) => {
         reject();
         return;
       }
-      // //console.log('---ALL', item);
-      // setProgressVisible(true);
-      //console.log('---ALL', item);
 
       var data = new FormData();
       data.append('GroupId', group_id);
+      data.append('RejectComment', RejectComment);
+
+
 
       var config: any = {
         method: 'post',
@@ -1495,6 +1495,120 @@ export const getDailyCollectionReportBm = (StationId: string, EmployeeId: any, E
       var config: any = {
         method: 'post',
         url: baseUrl + 'GetDailyCollectionReportBranchWise.php',
+        headers: {
+          'Cookie': 'PHPSESSID=8lptrr2dhtkl91mbic5pfnhn8t',
+        },
+        data: data
+      };
+
+      axios(config)
+        .then(async function (response) {
+          if (response.data.statusCode == 201) {
+            alert("No Data Found")
+            return
+          } else {
+            var DueDetailData = response.data;
+            DueDetailData ? setNoDailyCollectionData(true) : setNoDailyCollectionData(false);
+            setDailyCollectionReport(response.data)
+            resolve(response.data);
+            // console.log("---?", response.data)
+          }
+          setProgressVisible(false)
+
+        }).catch((e) => {
+          // console.log(e);
+
+          alert('Daily Collection Report Fetch data Failed!');
+          reject();
+        })
+
+    })
+      .catch(function (error) {
+        // console.log(error);
+        alert('Daily Collection Report Fetch data Failed!');
+        reject();
+
+
+      });
+  })
+  return promise;
+}
+//Get Daily Collection  report for RM
+export const getDailyCollectionReportRm = (StationId: string, EmployeeId: any, EmployeeTypeId: any, setDailyCollectionReport: (arg0: any) => void, setNoDailyCollectionData: (arg0: boolean) => any, setProgressVisible: (arg0: boolean) => void) => {
+
+  const promise = new Promise((resolve, reject) => {
+    NetInfo.fetch().then(state => {
+      if (!state.isConnected) {
+        alert('Please Check your internet');
+        reject();
+        return;
+      }
+      setProgressVisible(true);
+
+      var data = new FormData();
+      data.append('stationid', '' + StationId);
+  
+
+      var config: any = {
+        method: 'post',
+        url: baseUrl + 'dailycollectionRM.php',
+        headers: {
+          'Cookie': 'PHPSESSID=8lptrr2dhtkl91mbic5pfnhn8t',
+        },
+        data: data
+      };
+
+      axios(config)
+        .then(async function (response) {
+          if (response.data.statusCode == 201) {
+            alert("No Data Found")
+            return
+          } else {
+            var DueDetailData = response.data;
+            DueDetailData ? setNoDailyCollectionData(true) : setNoDailyCollectionData(false);
+            setDailyCollectionReport(response.data)
+            resolve(response.data);
+            // console.log("---?", response.data)
+          }
+          setProgressVisible(false)
+
+        }).catch((e) => {
+          // console.log(e);
+
+          alert('Daily Collection Report Fetch data Failed!');
+          reject();
+        })
+
+    })
+      .catch(function (error) {
+        // console.log(error);
+        alert('Daily Collection Report Fetch data Failed!');
+        reject();
+
+
+      });
+  })
+  return promise;
+}
+//Get Daily Collection  report for ZM
+export const getDailyCollectionReportZm = (StationId: string, EmployeeId: any, EmployeeTypeId: any, setDailyCollectionReport: (arg0: any) => void, setNoDailyCollectionData: (arg0: boolean) => any, setProgressVisible: (arg0: boolean) => void) => {
+
+  const promise = new Promise((resolve, reject) => {
+    NetInfo.fetch().then(state => {
+      if (!state.isConnected) {
+        alert('Please Check your internet');
+        reject();
+        return;
+      }
+      setProgressVisible(true);
+
+      var data = new FormData();
+      data.append('employeeid', '' + '1611');
+  
+
+      var config: any = {
+        method: 'post',
+        url: baseUrl + 'dailycollectionZM.php',
         headers: {
           'Cookie': 'PHPSESSID=8lptrr2dhtkl91mbic5pfnhn8t',
         },
@@ -2674,7 +2788,7 @@ export const CustomerCreditScoringReport = (userCnic: any) => {
 
     axios(config)
       .then(function (response) {
-        console.log(JSON.stringify("in the end", response.data))
+        console.log(JSON.stringify("in the end=========>", response.data))
 
         resolve(response.data);
 

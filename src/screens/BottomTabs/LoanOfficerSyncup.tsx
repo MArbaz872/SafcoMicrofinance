@@ -855,8 +855,7 @@ const Customer: () => Node = (props) => {
   );
    const getCreditScoringReport = (userCnic  ) => {
 
-     CustomerCreditScoringReport(userCnic).then((res) => {
-      console.log('res=-=>'+JSON.stringify(res.StatusCode))                        
+     CustomerCreditScoringReport(userCnic).then((res) => {                   
       if (res.StatusCode == 201) {
           navigation.navigate('CreditScoringReport', { res });    
       } else {
